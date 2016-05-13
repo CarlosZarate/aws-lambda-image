@@ -12,7 +12,7 @@ var https = require('https');
 var fs   = require("fs");
 var path = require("path");
 
-
+var configUrl = 'https://s3-eu-west-1.amazonaws.com/conf.lambda.taller.urbania/config.json';
 var configFileName = 'config.json'
 var configPath = path.resolve('/tmp', configFileName);
 var version = null;
@@ -22,6 +22,10 @@ var s3Object = null;
 exports.handler = function(event, context) {
     s3Object = event.Records[0].s3;
     version = getVersion();
+    if(s3Object.object.key == 'reload') {
+        version = "new"
+        console.log("Recargando config");
+    }
     fs.exists(configPath, function(exists) { 
       if (exists) {
         var configData = readConfig();
@@ -52,11 +56,11 @@ var getVersion = function() {
 }
 
 var loadConfig = function(loadCallback) {
-    https.get('https://s3-us-west-2.amazonaws.com/carloss3/config/config.json', function (res) {
+    https.get(configUrl, function (res) {
         res.setEncoding("utf8")
         res.on('data', function(data){
             var configData = JSON.parse(data);
-            configData.version = version;
+            configData.version = getVersion();
             writeConfig(configData);
             loadCallback(configData);
         });
@@ -85,7 +89,8 @@ var processImage =  function(configData) {
 }
 
 var readConfig = function() {
-    var configData = JSON.parse(fs.readFileSync(configPath, { encoding: "utf8" }))
+    var data = fs.readFileSync(configPath, { encoding: "utf8" });
+    var configData = JSON.parse(data)
     return configData;
 }
 

@@ -37,8 +37,14 @@ ImageReducer.prototype.exec = function ImageReducer_exec(image) {
 
         chain.pipes(streams).run()
         .then(function(buffer) {
-            var dir = option.directory || image.getDirName();
-
+            var dir = image.getDirName();
+            if(option.typePath == "abosulute") {
+                dir = option.directory || image.getDirName();
+            } else {
+                if(option.typePath == "relative") {
+                    dir = image.getDirName()+ '/' + option.directory;
+                }
+            }
             if ( dir ) {
                 dir = dir.replace(/\/$/, "") + "/";
             }

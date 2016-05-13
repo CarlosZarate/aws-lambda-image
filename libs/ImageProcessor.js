@@ -1,6 +1,7 @@
 var ImageResizer = require("./ImageResizer");
 var ImageReducer = require("./ImageReducer");
 var S3           = require("./S3");
+var ImageData = require("./ImageData");
 var Promise      = require("es6-promise").Promise;
 
 /**
@@ -39,6 +40,16 @@ ImageProcessor.prototype.run = function ImageProcessor_run(config) {
             unescape(this.s3Object.object.key.replace(/\+/g, ' '))
         )
         .then(function(imageData) {
+            if(config.get("origin")) {
+                var originFileName = imageData.getDirName()+ "/origin/"+imageData.getBaseName();
+                S3.putObject(config.get("bucket"), originFileName, imageData.getData(), imageData.getHeaders(), imageData.getACL())
+                .then(function() {
+                    resolve(imageData);
+                })
+                .catch(function(message) {
+                    reject(imageData);
+                });
+            }
             this.processImage(imageData, config)
             .then(function(results) {
                 S3.putObjects(results)
@@ -61,6 +72,7 @@ ImageProcessor.prototype.run = function ImageProcessor_run(config) {
 
 ImageProcessor.prototype.processImage = function ImageProcessor_processImage(imageData, config) {
     var jpegOptimizer = config.get("jpegOptimizer", "mozjpeg");
+    var typePath = config.get("typePath", "absolute");
     var promiseList = config.get("resizes", []).filter(function(option) {
             return (option.size && option.size > 0)   ||
                    (option.width && option.width > 0) ||
@@ -73,6 +85,7 @@ ImageProcessor.prototype.processImage = function ImageProcessor_processImage(ima
                 option.acl = config.get("acl");
             }
             option.jpegOptimizer = option.jpegOptimizer || jpegOptimizer;
+            option.typePath = option.typePath || typePath;
             return this.execResizeImage(option, imageData);
         }.bind(this));
 
