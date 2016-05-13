@@ -4,9 +4,8 @@ lambda:
 	@echo "Factory package files..."
 	@if [ ! -d build ] ;then mkdir build; fi
 	@cp index.js build/index.js
-	@cp config.json build/config.json
 	@if [ ! -d build/node_modules ] ;then mkdir build/node_modules; fi
-	@cp -R node_modules/ build/node_modules/
+	@cp -R node_modules/ build/
 	@cp -R libs build/
 	@cp -R bin build/
 	@rm -rf build/bin/darwin
