@@ -24,10 +24,12 @@ function ImageResizer(options) {
 ImageResizer.prototype.exec = function ImageResizer_exec(image) {
     var imagetype = image.getType();
     var params = {
-        srcData:   image.getData().toString("binary"),
-        srcFormat: imagetype,
-        format:    imagetype
+        srcData     : image.getData().toString("binary"),
+        srcFormat   : imagetype,
+        format      : imagetype,
+        quality     : this.options.quality,
     };
+    var strategy = this.options.strategy;
 
     var acl = this.options.acl;
 
@@ -43,19 +45,40 @@ ImageResizer.prototype.exec = function ImageResizer_exec(image) {
     }
 
     return new Promise(function(resolve, reject) {
-        ImageMagick.resize(params, function(err, stdout, stderr) {
-            if ( err || stderr ) {
-                reject("ImageMagick err" + (err || stderr));
+        if (strategy == "scale") {
+            ImageMagick.resize(params, function(err, stdout, stderr) {
+                if ( err || stderr ) {
+                    reject("ImageMagick err" + (err || stderr));
+                } else {
+                    resolve(new ImageData(
+                        image.fileName,
+                        image.bucketName,
+                        stdout,
+                        image.getHeaders(),
+                        acl
+                    ));
+                }
+            });
+        }
+        else {
+            if(strategy == "crop") {
+                ImageMagick.crop(params, function(err, stdout, stderr) {
+                if ( err || stderr ) {
+                    reject("ImageMagick err" + (err || stderr));
+                } else {
+                    resolve(new ImageData(
+                        image.fileName,
+                        image.bucketName,
+                        stdout,
+                        image.getHeaders(),
+                        acl
+                    ));
+                }
+            });
             } else {
-                resolve(new ImageData(
-                    image.fileName,
-                    image.bucketName,
-                    stdout,
-                    image.getHeaders(),
-                    acl
-                ));
+                reject("Estrategia invalida");
             }
-        });
+        }
     });
 };
 

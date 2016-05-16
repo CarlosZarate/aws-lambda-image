@@ -73,6 +73,8 @@ ImageProcessor.prototype.run = function ImageProcessor_run(config) {
 ImageProcessor.prototype.processImage = function ImageProcessor_processImage(imageData, config) {
     var jpegOptimizer = config.get("jpegOptimizer", "mozjpeg");
     var typePath = config.get("typePath", "absolute");
+    var strategy = config.get("strategy", "scale");
+    var quality = config.get("quality", 1);
     var promiseList = config.get("resizes", []).filter(function(option) {
             return (option.size && option.size > 0)   ||
                    (option.width && option.width > 0) ||
@@ -86,6 +88,8 @@ ImageProcessor.prototype.processImage = function ImageProcessor_processImage(ima
             }
             option.jpegOptimizer = option.jpegOptimizer || jpegOptimizer;
             option.typePath = option.typePath || typePath;
+            option.strategy = option.strategy || strategy;
+            option.quality = option.quality || quality;
             return this.execResizeImage(option, imageData);
         }.bind(this));
 
@@ -113,11 +117,14 @@ ImageProcessor.prototype.processImage = function ImageProcessor_processImage(ima
 ImageProcessor.prototype.execResizeImage = function ImageProcessor_execResizeImage(option, imageData) {
     return new Promise(function(resolve, reject) {
         var resizer = new ImageResizer(option);
-
         resizer.exec(imageData)
         .then(function(resizedImage) {
             var reducer = new ImageReducer(option);
-
+            /*if (option.reducer) {
+                var reducer = new ImageReducer(option);
+                return reducer.exec(resizedImage);
+            }
+            return resizedImage;*/
             return reducer.exec(resizedImage);
         })
         .then(function(reducedImage) {
@@ -150,5 +157,38 @@ ImageProcessor.prototype.execReduceImage = function(option, imageData) {
         });
     });
 };
+
+/**
+ * Create final image
+ *
+ * @public
+ * @param Object option
+ * @param ImageData imageData
+ * @return imageData
+ */
+ ImageProcessor.prototype.getFinalImage = function(option, imageData) {
+    var acl = imageData.getACL();
+    var dir = imageData.getDirName();
+    if(option.typePath == "abosulute") {
+        dir = option.directory;
+    } else {
+        if(option.typePath == "relative") {
+            dir = imageData.getDirName()+ '/' + option.directory;
+        }
+    }
+    if ( dir ) {
+        dir = dir.replace(/\/$/, "") + "/";
+    }
+    var finalImage = new ImageData(
+        dir + imageData.getBaseName(),
+        option.bucket || imageData.bucketName,
+        imageData.getData(),
+        imageData.getHeaders(),
+        acl
+    );
+
+    return finalImage;
+ }
+
 
 module.exports = ImageProcessor;
