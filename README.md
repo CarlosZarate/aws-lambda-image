@@ -43,24 +43,33 @@ Configuration is simple, see below:
 
 ```json
 {
-  "bucket": "your-destination-bucket",
-  "jpegOptimizer": "jpegoptim|mozjpeg"
+  "bucket": "dest.lambda.taller.urbania",
   "reduce": {
-      "directory": "reduced"
+    "directory": "reduced_origin",
+    "typePath": "relative"
   },
+  "origin": true,
   "resizes": [
     {
-      "size": 300,
-      "directory": "resized/small"
+      "height": 480,
+      "width": 640,
+      "directory": "xlarge",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
     },
     {
-      "size": 600,
-      "directory": "resized/middle"
+      "height": 169,
+      "width": 298,
+      "directory": "large",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
     },
-    {
-      "size": 900,
-      "directory": "resized/large"
-    }
   ]
 }
 ```
@@ -70,10 +79,16 @@ Configuration is simple, see below:
 - `reduce`: [Object] Reduce setting.
   - `directory`: [String] Image directory path.
   - `bucket`: [Object] Destination bucket to override. If not supplied, it will use `bucket` setting.
+  - `typePath`: [String] Select the type of path used to locate the reduced image. `abosolute` or `relative` is avaialble. (default is `absolute`).
 - `resizes`: [Array] Resize setting.
   - `size`: [Number] Image width.
+  - `height`: [Number] Image height if size is not defined.
+  - `width`: [Number] Image width if size is not defined.
   - `directory`: [String] Image directory path.
+  - `strategy`: [String] Select the strategy to resize. `scale` or `crop` is avaialble. (default is `scale`).
   - `bucket`: [Object] Destination bucket to override. If not supplied, it will use `bucket` setting.
+  - `reducer`: [String] Select `true` if you need optimize the image. This value is `required`.
+  - `quality`: [Number] Percent of quality apply to resize image. 1 = 100 %.
 
 If you want to check how this works with your configuration, you can use `configtest`:
 
