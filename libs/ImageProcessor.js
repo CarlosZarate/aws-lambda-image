@@ -24,6 +24,7 @@ function ImageProcessor(s3Object) {
  * @param Config config
  */
 ImageProcessor.prototype.run = function ImageProcessor_run(config) {
+    var that = this;
     return new Promise(function(resolve, reject) {
         // If object.size equals 0, stop process
         if ( this.s3Object.object.size === 0 ) {
@@ -40,18 +41,11 @@ ImageProcessor.prototype.run = function ImageProcessor_run(config) {
             unescape(this.s3Object.object.key.replace(/\+/g, ' '))
         )
         .then(function(imageData) {
-            if(config.get("origin")) {
-                var originFileName = imageData.getDirName()+ "/origin/"+imageData.getBaseName();
-                S3.putObject(config.get("bucket"), originFileName, imageData.getData(), imageData.getHeaders(), imageData.getACL())
-                .then(function() {
-                    resolve(imageData);
-                })
-                .catch(function(message) {
-                    reject(imageData);
-                });
-            }
-            this.processImage(imageData, config)
-            .then(function(results) {
+            return that.createOrigin(imageData,config);
+        })
+        .then(function(imageData) {
+            var objPromiseProcessImage  = this.processImage(imageData, config);
+            objPromiseProcessImage.then(function(results) {
                 S3.putObjects(results)
                 .then(function(images) {
                     resolve(images);
@@ -69,6 +63,24 @@ ImageProcessor.prototype.run = function ImageProcessor_run(config) {
         });
     }.bind(this));
 };
+
+ImageProcessor.prototype.createOrigin = function(imageData, config) {
+    return new Promise(function(resolve, reject) {
+        if(config.get("origin")) {
+            var originFileName = imageData.getDirName()+ "/origin/"+imageData.getBaseName();
+            S3.putObject(config.get("bucket"), originFileName, imageData.getData(), imageData.getHeaders(), imageData.getACL())
+            .then(function() {
+                resolve(imageData);
+            })
+            .catch(function(messages) {
+                reject(messages);
+            });
+        } else {
+            resolve(imageData);
+        }
+    });
+
+}
 
 ImageProcessor.prototype.processImage = function ImageProcessor_processImage(imageData, config) {
     var jpegOptimizer = config.get("jpegOptimizer", "mozjpeg");
@@ -115,17 +127,22 @@ ImageProcessor.prototype.processImage = function ImageProcessor_processImage(ima
  * @return Promise
  */
 ImageProcessor.prototype.execResizeImage = function ImageProcessor_execResizeImage(option, imageData) {
+    var that = this;
     return new Promise(function(resolve, reject) {
         var resizer = new ImageResizer(option);
         resizer.exec(imageData)
         .then(function(resizedImage) {
             var reducer = new ImageReducer(option);
-            /*if (option.reducer) {
+            if (option.reducer) {
                 var reducer = new ImageReducer(option);
                 return reducer.exec(resizedImage);
+            } else {
+                return resizedImage;
             }
-            return resizedImage;*/
-            return reducer.exec(resizedImage);
+        })
+        .then(function(reducedImage) {
+            var finalImage = that.getFinalImage(option, reducedImage);
+            return finalImage;
         })
         .then(function(reducedImage) {
             resolve(reducedImage);
@@ -169,7 +186,7 @@ ImageProcessor.prototype.execReduceImage = function(option, imageData) {
  ImageProcessor.prototype.getFinalImage = function(option, imageData) {
     var acl = imageData.getACL();
     var dir = imageData.getDirName();
-    if(option.typePath == "abosulute") {
+    if(option.typePath == "absolute") {
         dir = option.directory;
     } else {
         if(option.typePath == "relative") {

@@ -2,6 +2,7 @@
 
 lambda:
 	@echo "Factory package files..."
+	@rm -rf build
 	@if [ ! -d build ] ;then mkdir build; fi
 	@cp index.js build/index.js
 	@if [ ! -d build/node_modules ] ;then mkdir build/node_modules; fi
