@@ -12,7 +12,7 @@ var https = require('https');
 var fs   = require("fs");
 var path = require("path");
 
-var configUrl = 'url to json config';
+var configUrl = 'https://s3-eu-west-1.amazonaws.com/conf.lambda.taller.urbania/local_config.json';
 var configFileName = 'config.json'
 var configPath = path.resolve('/tmp', configFileName);
 var version = null;
@@ -90,7 +90,7 @@ var processImage =  function(configData) {
 
 var readConfig = function() {
     var data = fs.readFileSync(configPath, { encoding: "utf8" });
-    var configData = JSON.parse(data)
+    var configData = JSON.parse(data);
     return configData;
 }
 

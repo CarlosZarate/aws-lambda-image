@@ -1,0 +1,171 @@
+{
+  "local": true,
+  "bucket": "dest.lambda.taller.urbania",
+  "reduce": {
+    "directory": "reduced_origin",
+    "typePath": "relative"
+  },
+  "origin": true,
+  "resizes": [
+    {
+      "height": 480,
+      "width": 640,
+      "directory": "xlarge",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 169,
+      "width": 298,
+      "directory": "large",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 90,
+      "width": 160,
+      "directory": "xmedium",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 124,
+      "width": 218,
+      "directory": "xxmedium",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 150,
+      "width": 214,
+      "directory": "home",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 120,
+      "width": 168,
+      "directory": "list-view",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 185,
+      "width": 241,
+      "directory": "galery-view",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 450,
+      "width": 644,
+      "directory": "galery",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 96,
+      "width": 146,
+      "directory": "galery-thumb",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 600,
+      "width": 800,
+      "directory": "modal",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 150,
+      "width": 202,
+      "directory": "similar",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 100,
+      "width": 140,
+      "directory": "cercano",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 400,
+      "width": 400,
+      "directory": "feedbig",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 300,
+      "width": 300,
+      "directory": "feedsmall",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 280,
+      "width": 600,
+      "directory": "gallery-ios",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    },
+    {
+      "height": 300,
+      "width": 360,
+      "directory": "list-ios",
+      "acl": "public-read",
+      "typePath": "relative",
+      "strategy": "crop",
+      "reducer": false,
+      "quality": 1
+    }
+  ]
+}

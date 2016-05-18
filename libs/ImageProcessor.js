@@ -25,6 +25,10 @@ function ImageProcessor(s3Object) {
  */
 ImageProcessor.prototype.run = function ImageProcessor_run(config) {
     var that = this;
+    console.log(config.get("local"));
+    if (config.get("local")) {
+        S3.setLocalCredentials();
+    }
     return new Promise(function(resolve, reject) {
         // If object.size equals 0, stop process
         if ( this.s3Object.object.size === 0 ) {
@@ -35,7 +39,7 @@ ImageProcessor.prototype.run = function ImageProcessor_run(config) {
         if ( ! config.get("bucket") ) {
             config.set("bucket", this.s3Object.bucket.name);
         }
-
+        console.log(this.s3Object.object.key);
         S3.getObject(
             this.s3Object.bucket.name,
             unescape(this.s3Object.object.key.replace(/\+/g, ' '))
@@ -64,6 +68,13 @@ ImageProcessor.prototype.run = function ImageProcessor_run(config) {
     }.bind(this));
 };
 
+
+/**
+ * Run the promise to create origin image
+ *
+ * @public
+ * @param Config config
+ */
 ImageProcessor.prototype.createOrigin = function(imageData, config) {
     return new Promise(function(resolve, reject) {
         if(config.get("origin")) {

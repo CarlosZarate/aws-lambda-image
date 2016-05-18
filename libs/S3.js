@@ -1,5 +1,4 @@
 var ImageData = require("./ImageData");
-
 var aws     = require("aws-sdk");
 var Promise = require("es6-promise").Promise;
 var client  = new aws.S3({apiVersion: "2006-03-01"});
@@ -79,10 +78,19 @@ function putObjects(images) {
     }));
 }
 
+/**
+ * Set credentials if local is true
+ */
+ function setLocalCredentials() {
+    aws.config.loadFromPath('./aws_credentials.json');
+    client  = new aws.S3({apiVersion: "2006-03-01"});
+ }
+
 module.exports = {
     getObject: getObject,
     putObject: putObject,
-    putObjects: putObjects
+    putObjects: putObjects,
+    setLocalCredentials: setLocalCredentials
 };
 
 
