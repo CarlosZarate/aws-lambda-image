@@ -87,7 +87,7 @@ Configuration is simple, see below:
   - `directory`: [String] Image directory path.
   - `strategy`: [String] Select the strategy to resize. `scale` or `crop` is avaialble. (default is `scale`).
   - `bucket`: [Object] Destination bucket to override. If not supplied, it will use `bucket` setting.
-  - `reducer`: [String] Select `true` if you need optimize the image. This value is `required`.
+  - `reducer`: [String] Select `true` if you need to optimize the image. This value is `required`.
   - `quality`: [Number] Percent of quality apply to resize image. 1 = 100 %.
 
 If you want to check how this works with your configuration, you can use `configtest`:
@@ -141,6 +141,7 @@ MIT License.
 ### Author
 
 Yoshiaki Sugimoto
+Carlos Zarate
 
 ### Image credits
 

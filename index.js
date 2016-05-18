@@ -12,7 +12,7 @@ var https = require('https');
 var fs   = require("fs");
 var path = require("path");
 
-var configUrl = 'https://s3-eu-west-1.amazonaws.com/conf.lambda.taller.urbania/config.json';
+var configUrl = 'url to json config';
 var configFileName = 'config.json'
 var configPath = path.resolve('/tmp', configFileName);
 var version = null;
