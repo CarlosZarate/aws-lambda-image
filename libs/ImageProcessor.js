@@ -25,7 +25,6 @@ function ImageProcessor(s3Object) {
  */
 ImageProcessor.prototype.run = function ImageProcessor_run(config) {
     var that = this;
-    console.log(config.get("local"));
     if (config.get("local")) {
         S3.setLocalCredentials();
     }
@@ -39,7 +38,6 @@ ImageProcessor.prototype.run = function ImageProcessor_run(config) {
         if ( ! config.get("bucket") ) {
             config.set("bucket", this.s3Object.bucket.name);
         }
-        console.log(this.s3Object.object.key);
         S3.getObject(
             this.s3Object.bucket.name,
             unescape(this.s3Object.object.key.replace(/\+/g, ' '))
@@ -79,7 +77,7 @@ ImageProcessor.prototype.createOrigin = function(imageData, config) {
     return new Promise(function(resolve, reject) {
         if(config.get("origin")) {
             var originFileName = imageData.getDirName()+ "/origin/"+imageData.getBaseName();
-            S3.putObject(config.get("bucket"), originFileName, imageData.getData(), imageData.getHeaders(), imageData.getACL())
+            S3.putObject(config.get("bucket"), originFileName, imageData.getData(), imageData.getHeaders(), 'public-read')
             .then(function() {
                 resolve(imageData);
             })
@@ -97,6 +95,8 @@ ImageProcessor.prototype.processImage = function ImageProcessor_processImage(ima
     var jpegOptimizer = config.get("jpegOptimizer", "mozjpeg");
     var typePath = config.get("typePath", "absolute");
     var strategy = config.get("strategy", "scale");
+    var stretch = config.get("stretch", false);
+    var bg = config.get("bg", true);
     var quality = config.get("quality", 1);
     var promiseList = config.get("resizes", []).filter(function(option) {
             return (option.size && option.size > 0)   ||
@@ -109,6 +109,13 @@ ImageProcessor.prototype.processImage = function ImageProcessor_processImage(ima
             if ( ! option.acl ){
                 option.acl = config.get("acl");
             }
+            if ( typeof option.stretch === "undefined" ){
+                option.stretch = stretch;
+            }
+            if ( typeof option.bg === "undefined" ){
+                option.bg = bg;
+            }
+
             option.jpegOptimizer = option.jpegOptimizer || jpegOptimizer;
             option.typePath = option.typePath || typePath;
             option.strategy = option.strategy || strategy;

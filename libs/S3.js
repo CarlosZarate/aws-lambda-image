@@ -16,11 +16,10 @@ function getObject(bucket, key, acl) {
             if ( err ) {
                 reject("S3 getObject failed: " + err);
             } else {
-                if ("img-processed" in data.Metadata) {
+               /*if ("img-processed" in data.Metadata) {
                     reject("Object was already processed.");
                     return;
-                }
-
+                }*/
                 resolve(new ImageData(key, bucket, data.Body, { ContentType: data.ContentType, CacheControl: data.CacheControl }, acl));
             }
         });

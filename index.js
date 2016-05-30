@@ -12,7 +12,8 @@ var https = require('https');
 var fs   = require("fs");
 var path = require("path");
 
-var configUrl = 'https://s3-eu-west-1.amazonaws.com/conf.lambda.taller.urbania/local_config.json';
+var configUrl = '';
+var remoteConfig = true;
 var configFileName = 'config.json'
 var configPath = path.resolve('/tmp', configFileName);
 var version = null;
@@ -29,7 +30,7 @@ exports.handler = function(event, context) {
     fs.exists(configPath, function(exists) { 
       if (exists) {
         var configData = readConfig();
-        if(version != configData.version) {
+        if(version != configData.version && remoteConfig) {
             loadConfig(processImage);
         } else {
             processImage(configData);

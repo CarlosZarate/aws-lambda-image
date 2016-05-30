@@ -11,12 +11,12 @@ module.exports = {
         "object": {
           "eTag": "d2e7bb2c46ed44133f0b2e8fb16cbaaf",
           "sequencer": "0A1B2C3D4E5F678901",
-          "key": "19/avisos/3521/573cc684c472a.jpeg",
-          "size": 90480
+          "key": "temp/lost.png",
+          "size": 17579
         },
         "bucket": {
-          "arn": "arn:aws:s3:::ori.lambda.taller.urbania",
-          "name": "ori.lambda.taller.urbania",
+          "arn": "arn:aws:s3:::dest.lambda.taller.urbania",
+          "name": "dest.lambda.taller.urbania",
           "ownerIdentity": {
             "principalId": "EXAMPLE"
           }
